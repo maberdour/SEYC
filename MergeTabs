@@ -7,18 +7,30 @@ function myMerge() {
   }
 
   const sheets = ss.getSheets();
-  const mergeSheets = sheets.slice(1).map((s, index) => {
-    var firstRowModifier = index === 0 ? 0 : 1; // Include row 1 for the first merged tab, exclude for others
+  var mergeData = [];
+
+  sheets.slice(1).forEach((s, index) => {
+    var firstRowModifier = 1;
     var lastRow = getLastNonEmptyRow(s, 'A', 1);
-    var range = `'${s.getSheetName()}'!A${firstRowModifier + 1}:D${lastRow}`;
-    var selectClause = `SELECT Col1, Col2, Col3, Col4, '${s.getSheetName().replace("'", "\\'")}'`;
-    return `QUERY(FILTER(${range},'${s.getSheetName()}'!A${firstRowModifier + 1}:A<>""), "${selectClause}")`;
+    var rangeValues = s.getRange(firstRowModifier + 1, 1, lastRow - firstRowModifier, 4).getValues();
+    
+    // Iterate through each row in the range
+    rangeValues.forEach(row => {
+      // Exclude rows where all values are empty
+      if (row.some(cell => cell !== "")) {
+        // Append data to the mergeData array
+        mergeData.push([...row, s.getSheetName()]);
+      }
+    });
   });
 
-  var formulaText = '{' + mergeSheets.join(";") + '}';
   var newMasterSheet = ss.insertSheet('MasterMerge');
-  newMasterSheet.getRange(1, 1).setFormula(formulaText);
+  var header = ['Col1', 'Col2', 'Col3', 'Col4', 'SheetName'];
+  newMasterSheet.getRange(1, 1, 1, header.length).setValues([header]);
+  newMasterSheet.getRange(2, 1, mergeData.length, header.length).setValues(mergeData);
 }
+
+
 
 function getLastNonEmptyRow(sheet, column, startRow) {
   var values = sheet.getRange(column + startRow + ':' + column + sheet.getMaxRows()).getValues();
