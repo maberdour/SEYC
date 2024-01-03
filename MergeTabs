@@ -1,0 +1,37 @@
+function myMerge() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetDelete = ss.getSheetByName('MasterMerge');
+  Logger.log(sheetDelete);
+  if (sheetDelete != null) {
+    ss.deleteSheet(sheetDelete);
+  }
+
+  const sheets = ss.getSheets();
+  const mergeSheets = sheets.slice(1).map((s, index) => {
+    var firstRowModifier = index === 0 ? 0 : 1; // Include row 1 for the first merged tab, exclude for others
+    var lastRow = getLastNonEmptyRow(s, 'A', 1);
+    var range = `'${s.getSheetName()}'!A${firstRowModifier + 1}:D${lastRow}`;
+    return `FILTER(${range},'${s.getSheetName()}'!A${firstRowModifier + 1}:A<>"")`;
+  });
+
+  var formulaText = '{' + mergeSheets.join(";") + '}';
+  var newMasterSheet = ss.insertSheet('MasterMerge');
+  newMasterSheet.getRange(1, 1).setFormula(formulaText);
+}
+
+function getLastNonEmptyRow(sheet, column, startRow) {
+  var values = sheet.getRange(column + startRow + ':' + column + sheet.getMaxRows()).getValues();
+  for (var i = values.length - 1; i >= 0; i--) {
+    if (values[i][0] !== "") {
+      return i + startRow + 1;
+    }
+  }
+  return startRow; // If all cells are empty
+}
+
+function onOpen(e) {
+  SpreadsheetApp.getUi()
+    .createMenu('Merge Sheets')
+    .addItem('MergeAllSheets', 'myMerge')
+    .addToUi();
+}
