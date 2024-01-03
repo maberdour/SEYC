@@ -11,7 +11,8 @@ function myMerge() {
     var firstRowModifier = index === 0 ? 0 : 1; // Include row 1 for the first merged tab, exclude for others
     var lastRow = getLastNonEmptyRow(s, 'A', 1);
     var range = `'${s.getSheetName()}'!A${firstRowModifier + 1}:D${lastRow}`;
-    return `FILTER(${range},'${s.getSheetName()}'!A${firstRowModifier + 1}:A<>"")`;
+    var selectClause = `SELECT Col1, Col2, Col3, Col4, '${s.getSheetName().replace("'", "\\'")}'`;
+    return `QUERY(FILTER(${range},'${s.getSheetName()}'!A${firstRowModifier + 1}:A<>""), "${selectClause}")`;
   });
 
   var formulaText = '{' + mergeSheets.join(";") + '}';
