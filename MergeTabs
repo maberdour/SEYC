@@ -12,8 +12,10 @@ function myMerge() {
   sheets.slice(1).forEach((s, index) => {
     var firstRowModifier = 1;
     var lastRow = getLastNonEmptyRow(s, 'A', 1);
-    var rangeValues = s.getRange(firstRowModifier + 1, 1, lastRow - firstRowModifier, 4).getValues();
-    
+    var range = s.getRange(firstRowModifier + 1, 1, lastRow - firstRowModifier, 4);
+    var rangeValues = range.getValues();
+    var header = range.getSheet().getRange(1, 1, 1, 4).getValues()[0]; // Fetch header from the first row
+
     // Iterate through each row in the range
     rangeValues.forEach(row => {
       // Exclude rows where all values are empty
@@ -25,12 +27,9 @@ function myMerge() {
   });
 
   var newMasterSheet = ss.insertSheet('MasterMerge');
-  var header = ['Col1', 'Col2', 'Col3', 'Col4', 'SheetName'];
-  newMasterSheet.getRange(1, 1, 1, header.length).setValues([header]);
-  newMasterSheet.getRange(2, 1, mergeData.length, header.length).setValues(mergeData);
+  newMasterSheet.getRange(1, 1, 1, 5).setValues([['Date', 'Event', 'Location', 'Link', 'SheetName']]); // Use your actual headers
+  newMasterSheet.getRange(2, 1, mergeData.length, 5).setValues(mergeData);
 }
-
-
 
 function getLastNonEmptyRow(sheet, column, startRow) {
   var values = sheet.getRange(column + startRow + ':' + column + sheet.getMaxRows()).getValues();
