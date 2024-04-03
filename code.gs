@@ -20,7 +20,7 @@ function getData(sheetName) {
       for (var j = 0; j < headers.length; j++) {
         if (headers[j] === 'Date') {
           // Format the date as "Day of Week, Day Month Year"
-          entry[headers[j]] = Utilities.formatDate(eventDate, 'GMT', 'EEEE, dd MMMM yyyy');
+          entry[headers[j]] = Utilities.formatDate(eventDate, 'Europe/London', 'EEEE, dd MMMM yyyy');
         } else {
           entry[headers[j]] = row[j];
         }
