@@ -1,0 +1,28 @@
+=ARRAYFORMULA({
+  "Start Date", "Event", "Location", "Link", "Tab";
+  
+   IFERROR(    
+QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/1gnUZSM83122u3of7X0BAnsiBHpypgIA93D7aAeGg4Wc/edit#gid=1590008461", "Road!A2:D"), "SELECT Col1, Col2, Col3, Col4, 'Road' WHERE Col1 IS NOT NULL label 'Road' ''"),
+    "Error: Unable to retrieve data from Road sheet"
+  );
+
+   IFERROR(    
+QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/1gnUZSM83122u3of7X0BAnsiBHpypgIA93D7aAeGg4Wc/edit#gid=894720837", "CX!A2:D"), "SELECT Col1, Col2, Col3, Col4, 'CX' WHERE Col1 IS NOT NULL label 'CX' ''"),
+    "Error: Unable to retrieve data from CX sheet"
+  );
+
+   IFERROR(    
+QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/1gnUZSM83122u3of7X0BAnsiBHpypgIA93D7aAeGg4Wc/edit#gid=455121430", "Triathlon!A2:D"), "SELECT Col1, Col2, Col3, Col4, 'Triathlon' WHERE Col1 IS NOT NULL label 'Triathlon' ''"),
+    "Error: Unable to retrieve data from Triathlon sheet"
+  );
+
+   IFERROR(    
+QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/1gnUZSM83122u3of7X0BAnsiBHpypgIA93D7aAeGg4Wc/edit#gid=531214063", "MTB!A2:D"), "SELECT Col1, Col2, Col3, Col4, 'MTB' WHERE Col1 IS NOT NULL label 'MTB' ''"),
+    "Error: Unable to retrieve data from MTB sheet"
+  );
+
+  IFERROR(
+QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/1gnUZSM83122u3of7X0BAnsiBHpypgIA93D7aAeGg4Wc/edit#gid=1422525260", "Track!A2:D"), "SELECT Col1, Col2, Col3, Col4, 'Track' WHERE Col1 IS NOT NULL label 'Track' ''"),
+    "Error: Unable to retrieve data from Track sheet"
+  )
+})
