@@ -1,0 +1,96 @@
+{
+  "Name": "Events - British Cycling-GOOD",
+  "CreationDate": "2025-4-24",
+  "Commands": [
+    {
+      "Command": "store",
+      "Target": "fast",
+      "Value": "!replayspeed",
+      "Description": ""
+    },
+    {
+      "Command": "open",
+      "Target": "https://www.britishcycling.org.uk/events?region_id%5B%5D=4&zuv_bc_race_category_id%5B%5D=5&zuv_bc_race_category_id%5B%5D=10&zuv_bc_race_category_id%5B%5D=31&zuv_bc_race_category_id%5B%5D=35&zuv_bc_race_category_id%5B%5D=36&zuv_bc_race_category_id%5B%5D=41&zuv_bc_race_category_id%5B%5D=55&zuv_bc_race_category_id%5B%5D=57",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeXpathCount",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')]//a[contains(@class, 'event--race__title')])",
+      "Value": "filesCount",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Number of rows to extract = ${filesCount}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "1",
+      "Value": "loopCount",
+      "Description": ""
+    },
+    {
+      "Command": "while_v2",
+      "Target": "(${loopCount} <= ${filesCount})",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Loop number: ${loopCount}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeText",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')] //td[contains(@class, 'event--date__column')])[${loopCount}]",
+      "Value": "!csvLine",
+      "Description": ""
+    },
+    {
+      "Command": "storeText",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')]//a[contains(@class, 'event--race__title')])[${loopCount}]",
+      "Value": "!csvLine",
+      "Description": ""
+    },
+    {
+      "Command": "storeText",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')] //td[contains(@class, 'event--type__row')])[${loopCount}]",
+      "Value": "!csvLine",
+      "Description": ""
+    },
+    {
+      "Command": "storeText",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')] //td[6])[${loopCount}]",
+      "Value": "!csvLine",
+      "Description": ""
+    },
+    {
+      "Command": "storeAttribute",
+      "Target": "xpath=(//a[@class='button-expand show-races event--race__title'])[${loopCount}]@href",
+      "Value": "!csvLine",
+      "Description": ""
+    },
+    {
+      "Command": "csvSave",
+      "Target": "event_data",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${loopCount}) + 1;",
+      "Value": "loopCount",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    }
+  ]
+}
