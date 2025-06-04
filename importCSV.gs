@@ -1,7 +1,6 @@
-function appendNewEventsByURL_NoHeaders_FromFolder() {
+function appendNewEvents_ByDateAndName_WithDateFix() {
   const folderId = '1KQaUXfUNbIQSABXI-SdfNhrk6AmoP30_';
   const filename = 'event_data.csv';
-  const urlColumnIndex = 1; // Column B = URL
 
   const folder = DriveApp.getFolderById(folderId);
   const files = folder.getFilesByName(filename);
@@ -21,23 +20,32 @@ function appendNewEventsByURL_NoHeaders_FromFolder() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const sheetData = sheet.getDataRange().getValues();
 
-  const existingUrls = new Set(
-    sheetData.map(row => row[urlColumnIndex])
-  );
+  // ✅ Build set of normalized keys (Col A = Date, Col B = Event Name)
+  const existingKeys = new Set();
+  sheetData.forEach(row => {
+    const dateKey = normalizeDate(row[0]);
+    const name = normalizeValue(row[1]);
+    if (dateKey && name) {
+      existingKeys.add(`${dateKey}|${name}`);
+    }
+  });
 
-  const newRows = [];
   const now = formatDateTime(new Date());
+  const newRows = [];
 
   csvData.forEach(row => {
-    let url = row[urlColumnIndex];
+    const dateKey = normalizeDate(row[0]);
+    const name = normalizeValue(row[1]);
+    const rawUrl = row[4] ? row[4].toString().trim() : '';
+    const key = `${dateKey}|${name}`;
 
-    if (url && url.startsWith('/events')) {
-      url = 'https://www.britishcycling.org.uk' + url;
+    if (existingKeys.has(key)) return;
+
+    // Normalize URL
+    if (rawUrl.startsWith('/events')) {
+      row[4] = 'https://www.britishcycling.org.uk' + rawUrl;
     }
 
-    if (existingUrls.has(url)) return;
-
-    row[urlColumnIndex] = url;
     row.push(now);
     newRows.push(row);
   });
@@ -48,6 +56,36 @@ function appendNewEventsByURL_NoHeaders_FromFolder() {
   } else {
     Logger.log("ℹ️ No new rows to add.");
   }
+}
+
+function normalizeDate(value) {
+  if (!value) return '';
+  try {
+    if (Object.prototype.toString.call(value) === '[object Date]') {
+      // already a date
+      return Utilities.formatDate(value, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    } else if (typeof value === 'string') {
+      // parse string like "Tue 03/06/25"
+      const match = value.match(/(\d{2})\/(\d{2})\/(\d{2})/);
+      if (match) {
+        const [ , d, m, y ] = match;
+        const fullYear = Number(y) < 50 ? '20' + y : '19' + y; // assume 2000s
+        return `${fullYear}-${m}-${d}`;
+      }
+    }
+  } catch (e) {
+    Logger.log("Date parsing error: " + e.message);
+  }
+  return '';
+}
+
+function normalizeValue(value) {
+  return (value || '')
+    .toString()
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[^\x20-\x7E]/g, '')
+    .toLowerCase();
 }
 
 function formatDateTime(date) {
