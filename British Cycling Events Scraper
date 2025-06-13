@@ -1,6 +1,6 @@
 {
-  "Name": "Events - British Cycling-GOOD",
-  "CreationDate": "2025-4-24",
+  "Name": "BC Events - PAGINATION",
+  "CreationDate": "2025-6-13",
   "Commands": [
     {
       "Command": "store",
@@ -11,6 +11,18 @@
     {
       "Command": "open",
       "Target": "https://www.britishcycling.org.uk/events?region_id%5B%5D=4&zuv_bc_race_category_id%5B%5D=5&zuv_bc_race_category_id%5B%5D=10&zuv_bc_race_category_id%5B%5D=31&zuv_bc_race_category_id%5B%5D=35&zuv_bc_race_category_id%5B%5D=36&zuv_bc_race_category_id%5B%5D=41&zuv_bc_race_category_id%5B%5D=55&zuv_bc_race_category_id%5B%5D=57",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "1",
+      "Value": "continuePagination",
+      "Description": ""
+    },
+    {
+      "Command": "while_v2",
+      "Target": "${continuePagination} == 1",
       "Value": "",
       "Description": ""
     },
@@ -34,7 +46,7 @@
     },
     {
       "Command": "while_v2",
-      "Target": "(${loopCount} <= ${filesCount})",
+      "Target": "${loopCount} <= ${filesCount}",
       "Value": "",
       "Description": ""
     },
@@ -46,7 +58,7 @@
     },
     {
       "Command": "storeText",
-      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')] //td[contains(@class, 'event--date__column')])[${loopCount}]",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')]//td[contains(@class, 'event--date__column')])[${loopCount}]",
       "Value": "!csvLine",
       "Description": ""
     },
@@ -58,13 +70,13 @@
     },
     {
       "Command": "storeText",
-      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')] //td[contains(@class, 'event--type__row')])[${loopCount}]",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')]//td[contains(@class, 'event--type__row')])[${loopCount}]",
       "Value": "!csvLine",
       "Description": ""
     },
     {
       "Command": "storeText",
-      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')] //td[6])[${loopCount}]",
+      "Target": "xpath=(//tr[contains(@class, 'events--desktop__row')]//td[6])[${loopCount}]",
       "Value": "!csvLine",
       "Description": ""
     },
@@ -84,6 +96,60 @@
       "Command": "executeScript_Sandbox",
       "Target": "return Number(${loopCount}) + 1;",
       "Value": "loopCount",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=//div[@class='pagination']//a[contains(@class, 'next') and @href]",
+      "Value": "true",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//div[@class='pagination']//a[contains(@class, 'next') and @href]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "else",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "No more next page. Stopping.",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "0",
+      "Value": "continuePagination",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
       "Description": ""
     },
     {
