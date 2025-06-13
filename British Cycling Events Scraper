@@ -1,7 +1,13 @@
 {
-  "Name": "BC Events - PAGINATION",
+  "Name": "BC Events",
   "CreationDate": "2025-6-13",
   "Commands": [
+    {
+      "Command": "XRun",
+      "Target": "cmd.exe",
+      "Value": "/c del \"H:\\My Drive\\Projects\\05 SEYC\\UIVision\\datasources\\event_data.csv\"",
+      "Description": ""
+    },
     {
       "Command": "store",
       "Target": "fast",
